@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fuguangtong.mapper.ZwMapper">
+	<resultMap type="T_Zw" id="rm">
+		<id column="zid" property="zid"/>
+		<result column="zname" property="zname"/>
+		<result column="zms" property="zms"/>
+		<association property="type" javaType="T_Type">
+			<id column="tid" property="tid"/>
+			<result column="tname" property="tname"/>
+		</association>
+	</resultMap>
+<!-- 列表 -->
+	<select id="selectAll" resultMap="rm" parameterType="string">
+	select z.*,t.tname from t_zw z join t_type t on z.tid=t.tid
+	<where>
+		<if test="zname!=null and zname!=''">
+			z.zname like "%${zname}%"
+		</if>
+	</where>
+	</select>
+<!-- 实现下拉框回显 -->
+	<select id="selectType" resultType="T_Type">
+		select * from t_type
+	</select>
+<!-- 添加 -->
+	<insert id="insertZw" parameterType="T_Zw">
+		insert into t_zw values (null,#{zname},#{zms},#{type.tid})
+	</insert>
+<!-- 批量删除 -->
+	<delete id="plDelete" parameterType="ZwVal">
+		delete from t_zw
+		<where>
+			<if test="zid!=null and zid !=''">
+				<foreach collection="zid" item="zid" separator="," close=")" open="zid in (">
+					#{zid}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+<!-- 修改回显 -->
+	<select id="selectById" resultMap="rm" parameterType="int">
+		select z.*,t.tname from t_zw z join t_type t on z.tid=t.tid where z.zid=#{zid}
+	</select>
+<!-- 修改 -->
+	<update id="updateZw" parameterType="T_Zw">
+		update t_zw set zname=#{zname},zms=#{zms},tid=#{type.tid} where zid=#{zid}
+	</update>
+	</mapper>

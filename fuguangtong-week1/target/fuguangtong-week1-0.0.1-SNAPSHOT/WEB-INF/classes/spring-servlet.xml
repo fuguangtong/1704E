@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<!-- 扫描 -->
+	<context:component-scan
+		base-package="com.fuguangtong.controller"></context:component-scan>
+	<!--开启注解 -->
+	<!-- <mvc:annotation-driven conversion-service="conversion-service"></mvc:annotation-driven> -->
+	<!-- fast解析器 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<!-- 上传的解析器 -->
+	<!-- <bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		最大内存大小
+		<property name="maxInMemorySize" value="10240" />
+		最大文件大小，-1为不限制大小
+		<property name="maxUploadSize" value="-1" />
+	</bean> -->
+	<!-- 解放静态资源 -->
+	<mvc:default-servlet-handler />
+	<!-- 视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!--前缀 -->
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<!-- 后缀 -->
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	<!--拦截器 -->
+	<!-- <mvc:interceptors>
+			<mvc:interceptor>
+				<mvc:mapping path="/**"/>
+				<mvc:exclude-mapping path="css/**"/>
+				<mvc:exclude-mapping path="js/**"/>
+				<bean class="com.bw.interceptor.LoginIntercepter"></bean>
+			</mvc:interceptor>
+	</mvc:interceptors> -->
+	
+
+	<!--303验证-->
+	<!-- <bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass"
+			value="org.hibernate.validator.HibernateValidator" />
+		<property name="validationMessageSource"
+			ref="validatemessageSource" />
+	</bean>
+
+	<bean id="conversion-service"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
+
+	<bean id="validatemessageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:i18n" />
+		<property name="fileEncodings" value="utf-8" />
+		<property name="cacheSeconds" value="120" />
+	</bean> -->
+	
+</beans>

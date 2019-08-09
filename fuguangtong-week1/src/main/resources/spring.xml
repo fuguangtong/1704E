@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<!-- 开启扫描器 -->
+	<context:component-scan base-package="com.fuguangtong">
+		<!-- 不扫描controller -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	<!-- 引入dp.properties -->
+	<!--  <context:property-placeholder location="classpath:db.properties"/> -->
+	<!-- 配置数据源 dbcp,C3p0 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="clone">
+		<!-- <property name="jdbcUrl" value="${jdbc.url}"></property>
+		<property name="driverClass" value="${jdbc.driver}"></property>
+		<property name="user" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property> -->
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/week1?characterEncoding=utf-8" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	<!-- 配置SqlSessionFactory工厂 -->
+	<bean id="SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 引入数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+		
+		<!-- 核心配置文件 -->
+		<!-- <property name="configLocation" value="classpath:sqlMapConfig.xml"></property> -->
+		
+		<!-- 别名 -->
+		<property name="typeAliasesPackage" value="com.fuguangtong.entity"></property>
+		
+		<!-- 引入#mapper.xml(映射文件) -->
+		<property name="mapperLocations" value="classpath:com/fuguangtong/mapper/*.Mapper.xml"></property>
+		<!-- 分页插件 -->
+		<property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageHelper">
+					<property name="properties">
+						<value>
+							dialect=mysql
+							reasonable=true
+						</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+	<!-- 引入Mapper -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 指定接口的包 -->
+		<property name="basePackage" value="com.fuguangtong.mapper"></property>
+	</bean>
+	<!-- 数据源的事物管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 开启注解驱动 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+</beans>
